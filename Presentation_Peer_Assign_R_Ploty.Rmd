@@ -1,10 +1,9 @@
 ---
 title: "Presentation R Ploty"
 author: "A.Paul"
-date: "Januar 1, 2018"
+date: "Januar 3, 2018"
 output:
   slidy_presentation: default
-  ioslides_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,6 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r echo=FALSE, include=FALSE}
+library( lubridate )
 library( ggplot2 )
 library( plotly )
 ```
@@ -34,13 +34,27 @@ colnames(df_v_robust) <- c( "classify", "robustness", "classe" )
 ## str( df_v_robust )
 ```
 
+```{r}
+## l_date_ref <- as.Date( "2018-01-02" )
+## m <- as.POSIXlt( l_date_ref )
+## two month and one day before systemdate
+m <- as.POSIXlt( as.Date(today()) )
+## two month
+m$mon <- m$mon - 2
+## one day
+m <- m - ddays(1)
+l_date_before <- make_date( year(m), month(m) ,day(m) )
+```
 
 ## Classification (test data)
+```{r echo=FALSE, comment=NA} 
+cat( paste0("Github URL where the data is generated ( date ", l_date_before, " ) " )) 
+```
 
-Github URL where the data is generated: https://rawgit.com/ap-wi/peer_assign_plotly/master/Peer_Assignment_Prediction_Assignment_R_markdown_and_plotly.html
+https://rawgit.com/ap-wi/peer_assign_plotly/master/Peer_Assignment_Prediction_Assignment_R_markdown_and_plotly.html
 
 ```{r echo=FALSE, fig.height=6, fig.width=12}
-knitr::kable( head(df_t_fit_data, 10), digits=2 )
+knitr::kable( head(df_t_fit_data, 8), digits=2 )
 ```
 
 Notice: The classification of test cases 3) and 11) does not seem to be robust with 0.35 and 0.36.
@@ -81,7 +95,7 @@ ggplotly( robust_scatter )
 
 The patterns seem to look similar for all expressions of the variable "classe".
 
-```{r echo=FALSE, fig.height=5, fig.width=12}
+```{r echo=FALSE, fig.height=5, fig.width=11}
 robust_scatter <- df_v_robust %>%
   ggplot2::ggplot( aes( x = classify, y = robustness, color = classe ) ) + 
   geom_point() +
@@ -97,7 +111,7 @@ plotly::ggplotly( robust_scatter )
 
 The boxplots of robustness per expression show that the classification of "C" falls over the others.
 
-```{r fig.height=5, fig.width=12}
+```{r fig.height=5, fig.width=11}
 robust_boxplot <- df_v_robust %>%
   ggplot2::ggplot( aes( x = 1, y = robustness, color = classe ) ) + 
   geom_boxplot() +
