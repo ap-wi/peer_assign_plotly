@@ -37,7 +37,7 @@ colnames(df_v_robust) <- c( "classify", "robustness", "classe" )
 
 ## Classification (test data)
 
-Data from URL https://rawgit.com/ap-wi/peer_assign_plotly/master/Peer_Assignment_Prediction_Assignment_R_markdown_and_plotly.html
+Github URL where the data is generated: https://rawgit.com/ap-wi/peer_assign_plotly/master/Peer_Assignment_Prediction_Assignment_R_markdown_and_plotly.html
 
 ```{r echo=FALSE, fig.height=6, fig.width=12}
 knitr::kable( head(df_t_fit_data, 10), digits=2 )
@@ -46,13 +46,11 @@ knitr::kable( head(df_t_fit_data, 10), digits=2 )
 Notice: The classification of test cases 3) and 11) does not seem to be robust with 0.35 and 0.36.
 
 ## Robustness (test data)
-```{r echo=FALSE}
-l_today <- Sys.Date()
-## paste0( "Visualization of robustness ( ", format( l_today, format="%B %d %Y"), " )" )
-```
-In particular in test case 3) the classification of the expression "C" with 0.39 against "A" with 0.37 and "B" with 0.15 is to be described as weak.
 
 From the classification of the test data stood out two records with a weak robustness. The following graphics show how the robustness of the classification of the expressions of the variable "classe" behaves.
+
+In particular in test case 3) the classification of the expression "C" with 0.39 against "A" with 0.37 and "B" with 0.15 is to be described as weak.
+
 ```{r echo=FALSE, fig.height=4, fig.width=6}
 robust_scatter <- df_t_robust %>%
   ggplot2::ggplot( aes( x = classify, y = robustness, color = classe ) ) + 
@@ -97,7 +95,7 @@ plotly::ggplotly( robust_scatter )
 
 ## Robustness as boxplot
 
-The boxing plots of robustness per expression show that the classification of "C" drops over the others.
+The boxplots of robustness per expression show that the classification of "C" falls over the others.
 
 ```{r fig.height=5, fig.width=12}
 robust_boxplot <- df_v_robust %>%
