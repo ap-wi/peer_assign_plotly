@@ -1,0 +1,111 @@
+---
+title: "Presentation R Ploty"
+author: "A.Paul"
+date: "Januar 1, 2018"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=FALSE, include=FALSE}
+library( ggplot2 )
+library( plotly )
+```
+
+```{r echo=FALSE, include=FALSE}
+l_file1 <- "df_t_fit_data.csv"
+l_file2 <- "df_t_robust.csv"
+l_file3 <- "df_v_robust.csv"
+
+df_t_fit_data <- read.csv( file=l_file1, sep=",", dec="." )
+colnames(df_t_fit_data) <- c( "classe_A", "classe_B", "classe_C", "classe_D", "classe_E", "classe", "robustness" )
+## str(df_t_fit_data)
+
+df_t_robust <- read.csv( file=l_file2, sep=",", dec="." )
+colnames(df_t_robust) <- c( "classify", "robustness", "classe" )
+## str(df_t_robust)
+
+df_v_robust <- read.csv( file=l_file3, sep=",", dec="." )
+colnames(df_v_robust) <- c( "classify", "robustness", "classe" )
+## str( df_v_robust )
+```
+
+
+## Classification (test data)
+
+Data from URL https://rawgit.com/ap-wi/peer_assign_plotly/master/Peer_Assignment_Prediction_Assignment_R_markdown_and_plotly.html
+
+```{r echo=FALSE, fig.height=6, fig.width=12}
+knitr::kable( head(df_t_fit_data, 10), digits=2 )
+```
+
+Notice: The classification of test cases 3) and 11) does not seem to be robust with 0.35 and 0.36.
+
+## Robustness (test data)
+```{r echo=FALSE}
+l_today <- Sys.Date()
+## paste0( "Visualization of robustness ( ", format( l_today, format="%B %d %Y"), " )" )
+```
+In particular in test case 3) the classification of the expression "C" with 0.39 against "A" with 0.37 and "B" with 0.15 is to be described as weak.
+
+From the classification of the test data stood out two records with a weak robustness. The following graphics show how the robustness of the classification of the expressions of the variable "classe" behaves.
+```{r echo=FALSE, fig.height=4, fig.width=6}
+robust_scatter <- df_t_robust %>%
+  ggplot2::ggplot( aes( x = classify, y = robustness, color = classe ) ) + 
+  geom_point() +
+  ggtitle( "Visualization of robustness" ) +
+  xlab( "classify" ) + ylab( "robustness" ) +
+  xlim( c(0,1) ) + ylim( c(0,1) )
+
+plotly::ggplotly( robust_scatter )
+```
+
+## Robustness (validation data)
+
+The amount of test records is too small to recognize a pattern. Therefore, we consider the amount of validation data. Interestingly, there is a visible number of classifications with robustness below 0.5 for all expressions. The interaction of the representation by means of the package "plotly" makes it possible to look deeper into the set of data points deeper into it.
+
+```{r echo=FALSE, fig.height=4, fig.width=6}
+robust_scatter <- df_v_robust %>%
+  ggplot( aes( x = classify, y = robustness, color = classe ) ) + 
+  geom_point() + 
+##  geom_smooth() + 
+  ggtitle( "Visualization of robustness" ) +
+  xlab( "classify" ) + ylab( "robustness" ) + xlim( c(0,1) ) + ylim( c(0,1) )
+
+ggplotly( robust_scatter )
+```
+
+## Robustness (validation) per classe
+
+The patterns seem to look similar for all expressions of the variable "classe".
+
+```{r echo=FALSE, fig.height=5, fig.width=12}
+robust_scatter <- df_v_robust %>%
+  ggplot2::ggplot( aes( x = classify, y = robustness, color = classe ) ) + 
+  geom_point() +
+  facet_grid( . ~ classe ) +
+  ggtitle( "Visualization of robustness" ) +
+  xlab( "classify" ) + ylab( "robustness" ) + xlim( c(0, 1) ) + ylim( c(0, 1) )
+
+plotly::ggplotly( robust_scatter )
+```
+
+
+## Robustness as boxplot
+
+The boxing plots of robustness per expression show that the classification of "C" drops over the others.
+
+```{r fig.height=5, fig.width=12}
+robust_boxplot <- df_v_robust %>%
+  ggplot2::ggplot( aes( x = 1, y = robustness, color = classe ) ) + 
+  geom_boxplot() +
+  facet_grid( . ~ classe ) +
+  ggtitle( "Visualization of robustness" ) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plotly::ggplotly( robust_boxplot )
+```
